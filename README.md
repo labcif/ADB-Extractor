@@ -11,7 +11,7 @@ Python Script to extract Private, Public and APK File from Android emulator or d
 ## Usage
 
 ```bash
-python3 acquisition.py com.example.app -d emulator -t private
+python3 acquisition.py -a com.example.app -d emulator -t private
 ```
 
 ## Credits
