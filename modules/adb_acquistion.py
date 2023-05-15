@@ -77,7 +77,7 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
                                  capture_output=True)
 
     else:
-        print_message(callback, "[Info ] Host OS: POSIX")
+        print_message(callback, "[Info ] Host OS: Linux")
         SHELL = True
         ADB = subprocess.run("which adb", shell=True, capture_output=True)
         ADB = ADB.stdout.decode("utf-8").strip()
@@ -120,34 +120,35 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
             print_message(callback, "[Info ] Acquiring private data")
 
             # Primary method used to copy the data from the application
-            # subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /data/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-
-            # Method used in the bash script to copy the data from the application
-            # Check for filename with spaces
-            process = subprocess.Popen(ADB + " " + DEVICE + " shell " + CMD + " find /data/user_de/" + str(
-                USER) + "/" + APP + " -print0 | tee /sdcard/Download/" + FILENAME + ".1.txt " + END,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
-            process.wait()
-            process = subprocess.Popen(ADB + " " + DEVICE + " shell " + CMD + " find /data/user/" + str(
-                USER) + "/" + APP + " -print0 | tee /sdcard/Download/" + FILENAME + ".2.txt " + END,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
-            process.wait()
-            process = subprocess.Popen(
-                ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " -T /sdcard/Download/" + FILENAME + ".1.txt " + "-T /sdcard/Download/" + FILENAME + ".2.txt " + END,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-            process.wait()
+            # In windows this process was better when dealing with threads such as in the GUI
+            if callback is not None and os.name == 'nt':
+                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /data/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+            else:
+                # Method used in the bash script to copy the data from the application
+                # Check for filename with spaces
+                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " find /data/user_de/" + str(
+                    USER) + "/" + APP + " -print0 | tee /sdcard/Download/" + FILENAME + ".1.txt " + END,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
+                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " find /data/user/" + str(
+                    USER) + "/" + APP + " -print0 | tee /sdcard/Download/" + FILENAME + ".2.txt " + END,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
+                subprocess.run(
+                    ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " -T /sdcard/Download/" + FILENAME + ".1.txt " + "-T /sdcard/Download/" + FILENAME + ".2.txt " + END,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 
         elif DATA == "public":
             print_message(callback, "[Info ] Acquiring public data")
 
             # Primary method used to copy the data from the application
-            # subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /data/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-
-            # Method used in the bash script to copy the data from the application
-            # Check for filename with spaces
-            subprocess.run(
-                ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /storage/emulated/0/Android/data/" + APP + END,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
+            # In windows this process was better when dealing with threads such as in the GUI
+            if callback is not None and os.name == 'nt':
+                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /data/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+            else:
+                # Method used in the bash script to copy the data from the application
+                # Check for filename with spaces
+                subprocess.run(
+                    ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /storage/emulated/0/Android/data/" + APP + END,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
 
         # Retrieve the file from the device and save it to the current directory and remove the file from the device
         print_message(callback, "[Info ] Copying to local storage ...")
