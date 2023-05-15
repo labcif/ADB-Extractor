@@ -77,7 +77,7 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
                                  capture_output=True)
 
     else:
-        print_message(callback, "[Info ] Host OS: Linux")
+        print_message(callback, "[Info ] Host OS: POSIX")
         SHELL = True
         ADB = subprocess.run("which adb", shell=True, capture_output=True)
         ADB = ADB.stdout.decode("utf-8").strip()
@@ -178,7 +178,11 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         APK = APK.stdout.decode("utf-8").strip()
         APK = APK.split(":")[1]
         print_message(callback, "[Info ] APK: " + APK)
-        subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + APP + ".apk", shell=True)
+        if folder == '':
+            subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + APP + ".apk", shell=True)
+        else:
+            process = subprocess.Popen(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
+            process.wait()
 
         print_message(callback, "[Done ] Operation Completed with success, generated file: " + APP + ".apk", "ok")
 
