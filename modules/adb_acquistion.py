@@ -180,7 +180,7 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         if folder == '':
             subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + APP + ".apk", shell=True)
         else:
-            process = subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
+            subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
 
         print_message(callback, "[Done ] Operation Completed with success, generated file: " + APP + ".apk", "ok")
 

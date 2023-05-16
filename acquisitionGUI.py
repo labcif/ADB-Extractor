@@ -20,7 +20,6 @@ theme = sg.theme('DarkAmber')  # Add a touch of color
 packages = ['']
 APP = ''
 DEVICE = ''
-DATA = ''
 folder = ''
 
 # Callback function to update the output
@@ -29,6 +28,7 @@ def update_output(text):
 
 # Thread function that will occur in the background to extract the data
 def extract_thread():
+    DATA = []
     if APP == '':
         sg.popup_error('Select a package')
         return
@@ -54,18 +54,20 @@ def extract_thread():
     window['Browse'].update(disabled=True)
 
     if values['private']:
-        DATA = 'private'
-    elif values['public']:
-        DATA = 'public'
-    elif values['apk']:
-        DATA = 'apk'
+        DATA.append('private')
+    if values['public']:
+        DATA.append('public')
+    if values['apk']:
+        DATA.append('apk')
 
     if values['physical']:
         DEVICE = '-d'
     elif values['emulator']:
         DEVICE = '-e'
 
-    adb_acquistion.get_acquistion(APP, DEVICE, DATA, update_output, folder)
+    for data in DATA:
+        adb_acquistion.get_acquistion(APP, DEVICE, data, update_output, folder)
+        print('---NEXT Extraction---')
     window.write_event_value('-EXTRACTION-COMPLETED-', None)
 
 
@@ -73,9 +75,9 @@ def extract_thread():
 options_layout = [
     [sg.Text('Device', size=(15, 1)), sg.Radio('Physical', "RADIO1", default=True, size=(10, 1), key='physical'),
      sg.Radio('Emulator', "RADIO1", size=(10, 1), key='emulator')],
-    [sg.Text('Type', size=(15, 1)), sg.Radio('Private', "RADIO2", default=True, size=(10, 1), key='private'),
-     sg.Radio('Public', "RADIO2", size=(10, 1), key='public'),
-     sg.Radio('APK', "RADIO2", size=(10, 1), key='apk')]
+    [sg.Text('Type', size=(15, 1)), sg.Checkbox('Private', default=True, size=(10, 1), key='private'),
+     sg.Checkbox('Public', size=(10, 1), key='public'),
+     sg.Checkbox('APK', size=(10, 1), key='apk')]
 ]
 
 # Layout with the list of packages installed on the device
