@@ -122,7 +122,7 @@ layout = [
         sg.Push(),
         sg.Button('Extract', size=(15, 1), key='-EXTRACT-'),
         sg.Button('Exit', size=(15, 1), key='-EXIT-'),
-        sg.Push()
+        sg.Text('LabCIF - 2023', size=(30, 1), justification='center', font=("Helvetica", 10)),
     ]
 ]
 
