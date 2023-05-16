@@ -1,3 +1,12 @@
+#!/usr/bin/python
+
+# Author: Fabian Nunes
+# Acquisition tool to get the private folder application folder from and Android application in a rooted device or
+# emulator, script based on the work of @mfrade and is bash implementation
+# This is the GUI version of the script and was made using PySimpleGUI
+# Example: python acquisitionGUI.py
+# Attention in case of module not found error in Windows, install the module with pip install PySimpleGUI
+
 import PySimpleGUI as sg
 import modules.find_packages as f_packages
 import modules.adb_acquistion as adb_acquistion
@@ -14,11 +23,11 @@ DEVICE = ''
 DATA = ''
 folder = ''
 
-
+# Callback function to update the output
 def update_output(text):
     window['-OUTPUT-'].print(text)
 
-
+# Thread function that will occur in the background to extract the data
 def extract_thread():
     if APP == '':
         sg.popup_error('Select a package')
@@ -71,6 +80,7 @@ options_layout = [
 
 # Layout with the list of packages installed on the device
 
+# Layout with the list of packages installed on the device
 packages_layout = [
     [sg.Text('Packages Installed', size=(15, 1))],
     [sg.Listbox(values=packages, size=(300, 10), font=("Helvetica", 14), key='-PACKAGES-', enable_events=True)],
@@ -80,12 +90,13 @@ packages_layout = [
     ]
 ]
 
+# Layout with the output of the script
 output_layout = [
     [sg.Text('Output', size=(15, 1))],
     [sg.Output(size=(300, 10), font=("Helvetica", 14), key='-OUTPUT-')],
 ]
 
-# Layout
+# Main layout
 layout = [
     [
         sg.Push(),
@@ -104,7 +115,7 @@ layout = [
     [
         sg.Column(packages_layout, size=(300, 300), vertical_scroll_only=True),
         sg.VSeperator(),
-        sg.Column(output_layout, size=(400, 300), vertical_scroll_only=True),
+        sg.Column(output_layout, size=(300, 300), vertical_scroll_only=True),
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     [
