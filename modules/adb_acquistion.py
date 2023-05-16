@@ -50,7 +50,6 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         DEVNAME = "usb"
     else:
         print_message(callback, "[ERROR] Device not supported!", "error")
-        print(Bcolors.ENDC)
         return
 
     if os.name == 'nt':
@@ -181,8 +180,7 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         if folder == '':
             subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + APP + ".apk", shell=True)
         else:
-            process = subprocess.Popen(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
-            process.wait()
+            process = subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
 
         print_message(callback, "[Done ] Operation Completed with success, generated file: " + APP + ".apk", "ok")
 
