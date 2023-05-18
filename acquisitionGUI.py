@@ -22,9 +22,11 @@ APP = ''
 DEVICE = ''
 folder = ''
 
+
 # Callback function to update the output
 def update_output(text):
     window['-OUTPUT-'].print(text)
+
 
 # Thread function that will occur in the background to extract the data
 def extract_thread():
