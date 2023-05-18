@@ -29,9 +29,6 @@ def update_output(text):
 # Thread function that will occur in the background to extract the data
 def extract_thread():
     DATA = []
-    if APP == '':
-        sg.popup_error('Select a package')
-        return
     # Disable the extract button
     window['-EXTRACT-'].update(disabled=True)
     # Disable the package button
@@ -146,10 +143,13 @@ while True:
     elif event == '-FOLDER-':
         folder = values["-FOLDER-"]
     elif event == '-EXTRACT-':
-        # Clear the output
-        window['-OUTPUT-'].update('')
-        # Start the extraction thread
-        threading.Thread(target=extract_thread).start()
+        if APP == '':
+            sg.popup_error('Select a package')
+        else:
+            # Clear the output
+            window['-OUTPUT-'].update('')
+            # Start the extraction thread
+            threading.Thread(target=extract_thread).start()
     elif event == '-EXTRACTION-COMPLETED-':
         # Enable the extract button
         window['-EXTRACT-'].update(disabled=False)
