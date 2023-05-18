@@ -85,7 +85,7 @@ options_layout = [
 # Layout with the list of packages installed on the device
 packages_layout = [
     [sg.Text('Packages Installed', size=(15, 1))],
-    [sg.Listbox(values=packages, size=(300, 10), font=("Helvetica", 14), key='-PACKAGES-', enable_events=True)],
+    [sg.Listbox(values=packages, size=(350, 10), font=("Helvetica", 12), key='-PACKAGES-', enable_events=True)],
     [
         sg.Button('Get Packages', size=(15, 1), key='-GETPACKAGES-'),
         sg.Text('', size=(50, 1), key='-SELECTEDPACKAGE-'),
@@ -95,7 +95,7 @@ packages_layout = [
 # Layout with the output of the script
 output_layout = [
     [sg.Text('Output', size=(15, 1))],
-    [sg.Output(size=(300, 10), font=("Helvetica", 14), key='-OUTPUT-')],
+    [sg.Output(size=(400, 10), font=("Helvetica", 12), key='-OUTPUT-')],
 ]
 
 # Main layout
@@ -115,16 +115,16 @@ layout = [
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     [
-        sg.Column(packages_layout, size=(300, 300), vertical_scroll_only=True),
+        sg.Column(packages_layout, size=(350, 300)),
         sg.VSeperator(),
-        sg.Column(output_layout, size=(300, 300), vertical_scroll_only=True),
+        sg.Column(output_layout, size=(400, 300)),
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     [
         sg.Push(),
         sg.Button('Extract', size=(15, 1), key='-EXTRACT-'),
         sg.Button('Exit', size=(15, 1), key='-EXIT-'),
-        sg.Text('LabCIF - 2023', size=(30, 1), justification='center', font=("Helvetica", 10)),
+        sg.Text('LabCIF - 2023', size=(30, 1), justification='right', font=("Helvetica", 10)),
     ]
 ]
 
