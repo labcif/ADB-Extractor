@@ -116,8 +116,10 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
 
     if DATA == "private" or DATA == "public":
         if DATA == "private":
+            print("[Info ] Calculating hashes...")
+            hashes_output = subprocess.run(ADB + " " + DEVICE + " shell " + CMD + "'find /data/data/" + APP + END + " -type f -exec sha256sum {} \;'", stdout=subprocess.PIPE, shell=True)
+            output = hashes_output.stdout.decode("utf-8").strip()
             print_message(callback, "[Info ] Acquiring private data")
-
             # Primary method used to copy the data from the application
             # In windows this process was better when dealing with threads such as in the GUI
             if callback is not None and os.name == 'nt':
@@ -136,12 +138,16 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
 
         elif DATA == "public":
+            print("[Info ] Calculating hashes...")
+            hashes_output = subprocess.run(
+                ADB + " " + DEVICE + " shell " + CMD + "'find /storage/emulated/0/Android/data/" + APP + END + " -type f -exec sha256sum {} \;'",
+                stdout=subprocess.PIPE, shell=True)
+            output = hashes_output.stdout.decode("utf-8").strip()
             print_message(callback, "[Info ] Acquiring public data")
-
             # Primary method used to copy the data from the application
             # In windows this process was better when dealing with threads such as in the GUI
             if callback is not None and os.name == 'nt':
-                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /data/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+                subprocess.run(ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /storage/emulated/0/Android/data/" + APP + END, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
             else:
                 # Method used in the bash script to copy the data from the application
                 # Check for filename with spaces
@@ -164,6 +170,18 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
             subprocess.run(ADB + " " + DEVICE + " pull /sdcard/Download/" + FILENAME + ".gz " + folder,
                            stdout=subprocess.DEVNULL, shell=True)
         print_message(callback, "[Info ] Copy Terminated.")
+        print("[Info ] Creating hashes file...")
+        # Check if the command executed successfully
+        if output == '':
+            print_message(callback, "[Info ] No hashes to store.", "error")
+            return
+        # Save the output to a file
+        #remove any \r\n
+        H_APP = APP.replace('\r', '')
+        H_FILENAME = H_APP + "-" + DATA + "--sha256_hashes"
+        OUTPUT_FILE = folder + "/" + H_FILENAME + ".txt"
+        with open(OUTPUT_FILE, 'w') as f:
+            f.write(output)
 
         print_message(callback, "[Info ] Cleaning acquisition files from phone...")
         subprocess.run(ADB + " " + DEVICE + " shell rm /sdcard/Download/" + FILENAME + ".gz", stdout=subprocess.DEVNULL,
@@ -182,6 +200,24 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         else:
             subprocess.run(ADB + " " + DEVICE + " pull " + APK + " " + folder + "/" + APP + ".apk", shell=True)
 
+        #calculate sha256 of the apk
+        print_message(callback, "[Info ] Calculating hashes...")
+        hashes_output = subprocess.run(
+            ADB + " " + DEVICE + " shell " + CMD + "'sha256sum " + APK + "'",
+            stdout=subprocess.PIPE, shell=True)
+        output = hashes_output.stdout.decode("utf-8").strip()
+        print_message(callback, "[Info ] Creating hashes file...")
+        # Check if the command executed successfully
+        if output == '':
+            print_message(callback, "[Info ] No hashes to store.", "error")
+            return
+        # Save the output to a file
+        # remove any \r\n
+        H_APP = APP.replace('\r', '')
+        H_FILENAME = H_APP + "-" + DATA + "--sha256_hashes"
+        OUTPUT_FILE = folder + "/" + H_FILENAME + ".txt"
+        with open(OUTPUT_FILE, 'w') as f:
+            f.write(output)
         print_message(callback, "[Done ] Operation Completed with success, generated file: " + APP + ".apk", "ok")
 
     else:
