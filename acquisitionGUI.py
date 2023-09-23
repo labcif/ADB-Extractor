@@ -103,7 +103,7 @@ layout = [
         sg.Push(),
         sg.Text('ADB Extractor', size=(30, 1), justification='center', font=("Helvetica", 25)),
         sg.Push(),
-        sg.Button('?', size=(1, 1), key='-INFO-'),
+        #sg.Button('?', size=(1, 1), key='-INFO-'),
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     *options_layout,
@@ -114,16 +114,19 @@ layout = [
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     [
+        sg.Push(),
         sg.Column(packages_layout, size=(350, 300)),
         sg.VSeperator(),
         sg.Column(output_layout, size=(400, 300)),
+        sg.Push()
     ],
     [sg.VerticalSeparator(pad=((0, 0), (10, 10)))],
     [
         sg.Push(),
         sg.Button('Extract', size=(15, 1), key='-EXTRACT-'),
         sg.Button('Exit', size=(15, 1), key='-EXIT-'),
-        sg.Text('LabCIF - 2023', size=(30, 1), justification='right', font=("Helvetica", 10)),
+        sg.Push(),
+        #sg.Text('LabCIF - 2023', size=(30, 1), justification='right', font=("Helvetica", 10)),
     ]
 ]
 
