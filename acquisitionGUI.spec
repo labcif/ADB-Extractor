@@ -19,7 +19,6 @@ a = Analysis(
     cipher=block_cipher,
     noarchive=False,
 )
-a.datas += [('labcif.png','./img/labcif.png','DATA')]
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -36,11 +35,10 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='./img/labcif.ico'
 )

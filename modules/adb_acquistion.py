@@ -1,8 +1,11 @@
 import os
+import shutil
 import subprocess
+import gzip
 import time
 from datetime import datetime
 import modules.sha_hashes as sha_hashes
+import modules.utils as utils
 
 
 class Bcolors:
@@ -111,6 +114,8 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
         USER) + "--" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".tar"
 
     OUTPUT_FOLDER = FILENAME[:-4]
+    #remove \r\n from the string
+    OUTPUT_FOLDER = utils.sanitize_filename(OUTPUT_FOLDER)
     if folder != '':
         OUTPUT_FOLDER = folder + "/" + OUTPUT_FOLDER
     OUTPUT_FILE = OUTPUT_FOLDER + "/" + "sha256_hashes.txt"
@@ -160,13 +165,6 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
                     ADB + " " + DEVICE + " shell " + CMD + " tar -cvzf /sdcard/Download/" + FILENAME + " /storage/emulated/0/Android/data/" + APP + END,
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=SHELL)
 
-        OUTPUT_FOLDER = FILENAME[:-4]
-        if folder != '':
-            OUTPUT_FOLDER = folder + "/" + OUTPUT_FOLDER
-        OUTPUT_FILE = OUTPUT_FOLDER + "/" + "sha256_hashes.txt"
-        # create the folder
-        if not os.path.exists(OUTPUT_FOLDER):
-            os.makedirs(OUTPUT_FOLDER)
         # Retrieve the file from the device and save it to the current directory and remove the file from the device
         print_message(callback, "[Info ] Copying to local storage ...")
         print_message(callback, "[Info ] Compressing " + FILENAME + " ...")
@@ -185,7 +183,12 @@ def get_acquistion(APP, DEVICE, DATA, callback=None, folder=''):
 
         # unzip the file
         print_message(callback, "[Info ] Unzipping file...")
-        subprocess.run("gzip -d " + OUTPUT_FOLDER + "/" + FILENAME + ".gz", stdout=subprocess.DEVNULL, shell=True)
+        #remove \r\n from the string
+        FILENAME = utils.sanitize_filename(FILENAME)
+        with gzip.open(OUTPUT_FOLDER + "/" + FILENAME + ".gz", 'rb') as f_in:
+            with open(OUTPUT_FOLDER + "/" + FILENAME, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
         print_message(callback, "[Info ] Unzip Terminated.")
         # untar the file
         print_message(callback, "[Info ] Untaring file...")
